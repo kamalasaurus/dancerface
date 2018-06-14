@@ -13,7 +13,7 @@ module.exports = {
   },
   compile: function(scriptString) {
     const html = fs
-      .readFileSync(path.join('.', 'index-template.html'), 'utf8')
+      .readFileSync(path.join('.', 'template.html'), 'utf8')
       .replace('<body>', `<body>${scriptString}`);
 
     fs.writeFileSync(path.join('.', 'app', 'index.html'), html);
