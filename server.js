@@ -5,7 +5,7 @@ const StaticServer = require('static-server');
 
 const scripts = [
   './node_modules/p5/lib/p5.min.js',
-  './node_modules/@tensorflow/tfjs/dist/ts.min.js',
+  './node_modules/@tensorflow/tfjs/dist/tf.min.js',
   './node_modules/@tensorflow-models/posenet/dist/posenet.min.js'
 ]
 .map(copy)
