@@ -1,12 +1,19 @@
 {
   "name": "dancerface",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "d a n c e r f a c e",
+  "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC"
+  "author": "kamalasaurus@gmail.com",
+  "license": "MIT",
+  "dependencies": {
+    "@tensorflow-models/posenet": "^0.1.2",
+    "@tensorflow/tfjs": "^0.11.6",
+    "dominos": "^2.1.1",
+    "p5": "^0.6.1",
+    "static-server": "^2.2.1"
+  }
 }
