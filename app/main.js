@@ -9,6 +9,8 @@
 const w = 620
 const h = 480
 let video
+let dancing
+
 let poseNet
 let data = []
 let keyframes = [] // should just be a JSON array that's requested
@@ -23,6 +25,9 @@ function setup() {
 
   createCanvas(w, h)
   video = createCapture(VIDEO)
+
+  dancing = createVideo('assets/flossing.mp4', (vid) => { vid.play() })
+
   poseNet = ml5.poseNet(
     video,
     'multiple',
