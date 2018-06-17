@@ -30,6 +30,8 @@ function setup() {
 
   dancing = createVideo('https://media.giphy.com/media/xUA7aXRRUlmqhoG7q8/giphy.mp4', () => { dancing.play() })
 
+  debugger;
+
   //poseNet = ml5.poseNet(
     //video,
     //'multiple',
@@ -58,6 +60,7 @@ function draw() {
 }
 
 function drawData() {
+  console.log(data)
   data.forEach((datum) => {
 
     datum.pose.keypoints.forEach((keypoint) => {
