@@ -24,22 +24,34 @@ function setup() {
   //TODO: video.timestampupdate or whatever to set timeline comparions
 
   createCanvas(w, h)
-  video = createCapture(VIDEO)
+  //video = createCapture(VIDEO)
 
-  dancing = createVideo('assets/flossing.mp4', (vid) => { vid.play() })
+  //dancing = createVideo('./assets/flossing.mp4', (vid) => { vid.play() })
+
+  dancing = createVideo('https://media.giphy.com/media/xUA7aXRRUlmqhoG7q8/giphy.mp4', () => { dancing.play() })
+
+  //poseNet = ml5.poseNet(
+    //video,
+    //'multiple',
+    //(results) => { data = results }
+  //)
+
+  //video.hide()
 
   poseNet = ml5.poseNet(
-    video,
+    dancing,
     'multiple',
     (results) => { data = results }
   )
-  video.hide()
+  dancing.hide()
+
   fill(255, 0, 0)
   stroke(255, 0, 0)
 }
 
 function draw() {
-  image(video, 0, 0, w, h)
+  //image(video, 0, 0, w, h)
+  image(dancing, 0, 0, dancing.width, dancing.height)
   drawData()
   //TODO: RMS difference between video feed @time intervals and freeze frames
   //reset if too different
