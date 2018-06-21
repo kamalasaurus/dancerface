@@ -13,7 +13,7 @@ let video;
 let dancing;
 
 let poseNet;
-let data = [];
+let person = [];
 let keyframes = []; // should just be JSON array of keypoints that are precomputed for poses in timestamp order!
 let currentPosition = 0;
 const framePositions = [1, 2, 3, 4, 5]; // should be millisecond timestamps
@@ -33,7 +33,7 @@ function setup() {
 
   //poseNet = ml5.poseNet(
     //video,
-    //'multiple',
+    //'single',
     //(results) => { data = results }
   //)
 
@@ -41,8 +41,8 @@ function setup() {
 
   poseNet = ml5.poseNet(
     dancing,
-    'multiple',
-    (results) => { data = results }
+    'single',
+    (results) => { person = results }
   );
   dancing.hide();
 
@@ -59,18 +59,19 @@ function draw() {
 }
 
 function drawData() {
-  console.log(data);
-  data.forEach((datum) => {
+  person.forEach((personData) => {
 
-    datum.pose.keypoints.forEach((keypoint) => {
+    personData.pose.keypoints.forEach((keypoint) => {
       if (keypoint.score > 0.2)
         ellipse(keypoint.position.x, keypoint.position.y, 10, 10);
     });
 
-    datum.skeleton.forEach(([start, end]) => {
+    personData.skeleton.forEach(([start, end]) => {
       line(start.position.x, start.position.y, end.position.x, end.position.y);
     });
 
+    //TODO: should actually compare skeleton, not keypoints
+    //HMM -- that won't quite work either; need to group by coords
     //compareKeypoints(datum.pose.keypoints)
 
   });

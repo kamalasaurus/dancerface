@@ -15,27 +15,27 @@ compile(scripts); // build upon launch
 
 // setup dominos
 
-let address = new pizzapi.Address('721 Broadway, New York, NY 10003');
-let customer = new pizzapi.Customer({
-  address,
-  firstName: 'NYU',
-  lastName: 'Student',
-  phone: 'xxx-xxx-xxxx',
-  email: 'salami@sandwich.com'
-});
+//let address = new pizzapi.Address('721 Broadway, New York, NY 10003');
+//let customer = new pizzapi.Customer({
+  //address,
+  //firstName: 'NYU',
+  //lastName: 'Student',
+  //phone: 'xxx-xxx-xxxx',
+  //email: 'salami@sandwich.com'
+//});
 //TODO: add secrets.json for name and email creds
 
-let myStore;
+//let myStore;
 
-pizzapi.Util.findNearbyStores(
-  '721 Broadway, New York, NY 10003',
-  'Delivery',
-  (storeData) => {
-    const { result: { Stores: [{ StoreID }] }} = storeData;
-    myStore = new pizzapi.Store();
-    myStore.ID = StoreID;
-  }
-);
+//pizzapi.Util.findNearbyStores(
+  //'721 Broadway, New York, NY 10003',
+  //'Delivery',
+  //(storeData) => {
+    //const { result: { Stores: [{ StoreID }] }} = storeData;
+    //myStore = new pizzapi.Store();
+    //myStore.ID = StoreID;
+  //}
+//);
 
 //get menu
 //get code for cheese pizza
