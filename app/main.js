@@ -31,11 +31,13 @@ function setup() {
 
   dancing = document.createElement('video');
   dancing.setAttribute('muted', true);
-  dancing.setAttribute('autoplay', true);
+  //dancing.setAttribute('autoplay', true);
   dancing.setAttribute('loop', true);
   dancing.setAttribute('width', w);
   dancing.setAttribute('height', h);
   dancing.src = './assets/dancing.mp4';
+
+  dancing.addEventListener('click', () => { dancing.play(); })
 
   document.body.appendChild(dancing);
 
