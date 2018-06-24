@@ -1,6 +1,11 @@
 const {copy, concat, compile} = require('./build.js');
 const pizzapi = require('dominos');
-const StaticServer = require('static-server');
+
+const fs = require('fs');
+const path = require('path');
+
+const express = require('express');
+const bodyParser = require('body-parser');
 
 // build app
 const scripts = [
@@ -13,8 +18,8 @@ const scripts = [
 
 compile(scripts); // build upon launch
 
-// setup dominos
 
+// setup dominos
 //let address = new pizzapi.Address('721 Broadway, New York, NY 10003');
 //let customer = new pizzapi.Customer({
   //address,
@@ -43,12 +48,17 @@ compile(scripts); // build upon launch
 
 
 // run server
-const server = new StaticServer({
-  rootPath: './app',
-  port: 1337
+const app = express();
+const root = path.join(process.cwd(), 'app');
+
+app.use(express.static(root));
+app.use(bodyParser.urlencoded({ extended: false }));
+
+app.post('write', (req, res) => {
+  const filename = `pose_${Date.now()}`;
+  const body = req.body.Body;
+  fs.writeFileSync(filename, JSON.stringify(body, null, 2));
 });
 
-server.start(() => {
-  console.log('server listening to', server.port);
-});
+app.listen(1337, () => { console.log('listening on port 1337') });
 

@@ -7,8 +7,10 @@
 
 const threshold = 20;
 
-const w = 620;
-const h = 480;
+//const w = 770;
+const w = 1960;
+const h = 1080;
+
 let video;
 let dancing;
 
@@ -27,9 +29,15 @@ function setup() {
   createCanvas(w, h);
   //video = createCapture(VIDEO)
 
-  //dancing = createVideo('./assets/flossing.mp4', (vid) => { vid.play() })
+  dancing = document.createElement('video');
+  dancing.setAttribute('muted', true);
+  dancing.setAttribute('autoplay', true);
+  dancing.setAttribute('loop', true);
+  dancing.setAttribute('width', w);
+  dancing.setAttribute('height', h);
+  dancing.src = './assets/dancing.mp4';
 
-  dancing = createVideo('https://media.giphy.com/media/xUA7aXRRUlmqhoG7q8/giphy.mp4', () => { dancing.play() });
+  document.body.appendChild(dancing);
 
   //poseNet = ml5.poseNet(
     //video,
@@ -42,9 +50,8 @@ function setup() {
   poseNet = ml5.poseNet(
     dancing,
     'single',
-    (results) => { person = results }
+    (results) => { person = results; }
   );
-  dancing.hide();
 
   fill(255, 0, 0);
   stroke(255, 0, 0);
@@ -52,13 +59,13 @@ function setup() {
 
 function draw() {
   //image(video, 0, 0, w, h);
-  image(dancing, 0, 0, dancing.width, dancing.height);
+  //image(dancing, 0, 0, w, h);
+  background(255, 255, 255);
   drawData();
-  //TODO: RMS difference between video feed @time intervals and freeze frames
-  //reset if too different
 }
 
 function drawData() {
+  //TODO: compare distance and angle from appendage keypoints to nose
   person.forEach((personData) => {
 
     personData.pose.keypoints.forEach((keypoint) => {
@@ -69,10 +76,6 @@ function drawData() {
     personData.skeleton.forEach(([start, end]) => {
       line(start.position.x, start.position.y, end.position.x, end.position.y);
     });
-
-    //TODO: should actually compare skeleton, not keypoints
-    //HMM -- that won't quite work either; need to group by coords
-    //compareKeypoints(datum.pose.keypoints)
 
   });
 }
@@ -108,5 +111,4 @@ function rms(arg1, arg2) {
 function reset() {
   data = []
   timelinePosition = 0
-  // restart video of dancer
 }
