@@ -1,14 +1,10 @@
-//TODO: video of dancer
-//TODO: freeze frames of important poses
-//TODO: run posenet on important poses
-//TODO: create array of said pose data
 //TODO: in server.js summon a dominos pizza upon total success!
 //TODO: block future success so the app doesn't go bankrupt 😅
 
 const threshold = 20;
 
-//const w = 770;
-const w = 1960;
+const w = 770;
+//const w = 1960;
 const h = 1080;
 
 let video;
@@ -16,30 +12,67 @@ let dancing;
 
 let poseNet;
 let person = [];
-let keyframes = []; // should just be JSON array of keypoints that are precomputed for poses in timestamp order!
+let keyframes = [];
 let currentPosition = 0;
 const framePositions = [1, 2, 3, 4, 5]; // should be millisecond timestamps
 // only push poses to data when > than millisecond timestamps, ++timelinePosition
+
+let imageArray = document.getElementsByTagName('img');
+
+(function() {
+  const imageContainer = document.createElement('div');
+        imageContainer.style = 'margin-bottom: 20px; padding: 4px;';
+  document.body.appendChild(imageContainer);
+
+  Array
+    .from({length: 19}, (e, i) => `./poses/red/${i}.png`)
+    .forEach((route, i) => {
+      const img = document.createElement('img');
+            img.src = route;
+            img.id = `image_${i}`;
+            img.style = 'width: 150px; height: 135; display: inline-block; border: solid 1px red; margin: 4px;';
+      imageContainer.appendChild(img);
+    });
+})();
 
 function setup() {
   //TODO: create video playback element with timeline and pose timestamps highlighted
   //TODO: video.onend fire reset
   //TODO: video.timestampupdate or whatever to set timeline comparions
 
-  createCanvas(w, h);
-  //video = createCapture(VIDEO)
 
   dancing = document.createElement('video');
   dancing.setAttribute('muted', true);
-  //dancing.setAttribute('autoplay', true);
+  dancing.setAttribute('autoplay', true);
   dancing.setAttribute('loop', true);
   dancing.setAttribute('width', w);
   dancing.setAttribute('height', h);
-  dancing.src = './assets/dancing.mp4';
+  dancing.src = './assets/dancing_crop.mp4';
 
-  dancing.addEventListener('click', () => { dancing.play(); })
+  dancing.addEventListener('click', () => {
+    if (dancing.paused) dancing.play();
+    else dancing.pause();
+  });
+
+  dancing.addEventListener('timeupdate', (event) => {
+    const timestamp = Math.floor(dancing.currentTime);
+    Array.from(imageArray)
+      .forEach((img) => {
+        const id = +img.id.split('_').slice(-1).join();
+        if (id < timestamp + 0.25) {
+          img.src = `./poses/purple/${id}.png`;
+          img.style.borderColor = 'purple';
+        } else {
+          img.src = `./poses/red/${id}.png`;
+          img.style.borderColor = 'red';
+        }
+      });
+  });
 
   document.body.appendChild(dancing);
+
+  createCanvas(w, h);
+  //video = createCapture(VIDEO)
 
   //poseNet = ml5.poseNet(
     //video,
@@ -49,11 +82,11 @@ function setup() {
 
   //video.hide()
 
-  poseNet = ml5.poseNet(
-    dancing,
-    'single',
-    (results) => { person = results; }
-  );
+  //poseNet = ml5.poseNet(
+    //dancing,
+    //'single',
+    //(results) => { person = results; }
+  //);
 
   fill(255, 0, 0);
   stroke(255, 0, 0);
