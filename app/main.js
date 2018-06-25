@@ -30,9 +30,14 @@ let imageArray = document.getElementsByTagName('img');
       const img = document.createElement('img');
             img.src = route;
             img.id = `image_${i}`;
-            img.style = 'width: 150px; height: 135; display: inline-block; border: solid 1px black; margin: 4px;';
+            img.style = 'width: 150px; height: 135; display: inline-block; border: solid 2px black; margin: 4px;';
       imageContainer.appendChild(img);
     });
+
+  fetch('./poses/poses.json')
+    .then(data => data.json())
+    .then(json => keyframes = json)
+
 })();
 
 function setup() {
@@ -40,6 +45,9 @@ function setup() {
   //TODO: video.onend fire reset
   //TODO: video.timestampupdate or whatever to set timeline comparions
 
+  const container = document.createElement('div');
+        container.style = 'vertical-align: top';
+  document.body.appendChild(container);
 
   dancing = document.createElement('video');
   dancing.setAttribute('muted', true);
@@ -47,6 +55,8 @@ function setup() {
   dancing.setAttribute('loop', true);
   dancing.setAttribute('width', w);
   dancing.setAttribute('height', h);
+  dancing.style = 'display: inline-block;';
+  dancing.id = 'dancing';
   dancing.src = './assets/dancing_crop.mp4';
 
   dancing.addEventListener('click', () => {
@@ -55,11 +65,11 @@ function setup() {
   });
 
   dancing.addEventListener('timeupdate', (event) => {
-    const timestamp = Math.floor(dancing.currentTime);
+    currentPosition = Math.floor(dancing.currentTime);
     Array.from(imageArray)
       .forEach((img) => {
         const id = +img.id.split('_').slice(-1).join();
-        if (id < timestamp + 0.25 && !img.classList.contains('green')) {
+        if (id < currentPosition + 0.25 && !img.classList.contains('green')) {
           img.src = `./poses/purple/${id}.png`;
           img.style.borderColor = 'magenta';
         } else if (!(id % 3)) {
@@ -73,18 +83,23 @@ function setup() {
       });
   });
 
-  document.body.appendChild(dancing);
+  container.appendChild(dancing);
 
-  createCanvas(w, h);
-  //video = createCapture(VIDEO)
+  createCanvas(640, 480);
+  video = createCapture(VIDEO)
 
-  //poseNet = ml5.poseNet(
-    //video,
-    //'single',
-    //(results) => { data = results }
-  //)
+  const canvas = document.querySelector('canvas');
 
-  //video.hide()
+  canvas.style = 'vertical-align: top; display: inline-block;';
+  container.appendChild(canvas);
+
+  poseNet = ml5.poseNet(
+    video,
+    'single',
+    (results) => { person = results }
+  )
+
+  video.hide()
 
   //poseNet = ml5.poseNet(
     //dancing,
@@ -97,9 +112,10 @@ function setup() {
 }
 
 function draw() {
+  image(video, 0, 0, 640, 480);
   //image(video, 0, 0, w, h);
   //image(dancing, 0, 0, w, h);
-  background(255, 255, 255);
+  //background(255, 255, 255);
   drawData();
 }
 
@@ -115,6 +131,8 @@ function drawData() {
     personData.skeleton.forEach(([start, end]) => {
       line(start.position.x, start.position.y, end.position.x, end.position.y);
     });
+
+    compareKeypoints(personData);
 
   });
 }
@@ -148,6 +166,6 @@ function rms(arg1, arg2) {
 }
 
 function reset() {
-  data = []
-  timelinePosition = 0
+  data = [];
+  timelinePosition = 0;
 }
