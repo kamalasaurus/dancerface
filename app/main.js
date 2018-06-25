@@ -30,7 +30,7 @@ let imageArray = document.getElementsByTagName('img');
       const img = document.createElement('img');
             img.src = route;
             img.id = `image_${i}`;
-            img.style = 'width: 150px; height: 135; display: inline-block; border: solid 1px red; margin: 4px;';
+            img.style = 'width: 150px; height: 135; display: inline-block; border: solid 1px black; margin: 4px;';
       imageContainer.appendChild(img);
     });
 })();
@@ -59,12 +59,16 @@ function setup() {
     Array.from(imageArray)
       .forEach((img) => {
         const id = +img.id.split('_').slice(-1).join();
-        if (id < timestamp + 0.25) {
+        if (id < timestamp + 0.25 && !img.classList.contains('green')) {
           img.src = `./poses/purple/${id}.png`;
-          img.style.borderColor = 'purple';
+          img.style.borderColor = 'magenta';
+        } else if (!(id % 3)) {
+          img.src = `./poses/green/${id}.png`;
+          img.classList.add('green');
+          img.style.borderColor = 'lightgreen';
         } else {
           img.src = `./poses/red/${id}.png`;
-          img.style.borderColor = 'red';
+          img.style.borderColor = 'black';
         }
       });
   });
