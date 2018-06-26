@@ -63,7 +63,7 @@ function setup() {
 
   dancing.addEventListener('timeupdate', (event) => {
     let previousPosition = currentPosition;
-    currentPosition = Math.floor(dancing.currentTime); //spaghetti!
+    currentPosition = Math.floor(dancing.currentTime + 0.25); //spaghetti!
     if (previousPosition > currentPosition) reset();
 
 
@@ -71,7 +71,7 @@ function setup() {
     Array.from(imageArray)
       .forEach((img) => {
         const id = +img.id.split('_').slice(-1).join();
-        if (id < currentPosition + 0.25 && !img.classList.contains('green')) {
+        if (id < currentPosition && !img.classList.contains('green')) {
           img.src = `./poses/purple/${id}.png`;
           img.style.borderColor = 'magenta';
         } else if (img.classList.contains('green')) {
@@ -227,6 +227,10 @@ function distance(x_comp, y_comp) {
 
 function reset() {
   Array.from(imageArray)
-    .forEach(img => img.classList.remove('green'));
+    .forEach((img) => {
+      const id = +img.id.split('_').slice(-1).join();
+      img.classList.remove('green');
+      img.src = `./poses/red/${id}.png`;
+    });
 }
 
