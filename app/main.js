@@ -63,7 +63,7 @@ function setup() {
   });
 
   dancing.addEventListener('timeupdate', (event) => {
-    currentPosition = Math.floor(dancing.currentTime);
+    currentPosition = Math.floor(dancing.currentTime); //spaghetti!
     Array.from(imageArray)
       .forEach((img) => {
         const id = +img.id.split('_').slice(-1).join();
@@ -78,6 +78,9 @@ function setup() {
           img.style.borderColor = 'black';
         }
       });
+
+    //TODO: whenever green/total > victory threshold, order the pizza!
+
   });
 
   container.appendChild(dancing);
@@ -130,8 +133,6 @@ function compareKeypoints(livePoints) {
 
   const comparisonGroups = livePose.concat(expectedPose)
     .reduce(groupByKey, {});
-
-  debugger;
 
   const matched = Object.keys(comparisonGroups)
     .map((key) => {
