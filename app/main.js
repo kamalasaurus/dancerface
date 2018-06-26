@@ -15,6 +15,8 @@ let keyFrames = [];
 let thresholds = {};
 let currentPosition = 0;
 
+let hasSummonedPizza = false;
+
 let imageArray = document.getElementsByTagName('img');
 
 (function() {
@@ -60,7 +62,12 @@ function setup() {
   });
 
   dancing.addEventListener('timeupdate', (event) => {
+    let previousPosition = currentPosition;
     currentPosition = Math.floor(dancing.currentTime); //spaghetti!
+    if (previousPosition > currentPosition) reset();
+
+
+    // update image states
     Array.from(imageArray)
       .forEach((img) => {
         const id = +img.id.split('_').slice(-1).join();
@@ -76,10 +83,17 @@ function setup() {
         }
       });
 
-    const victory = Array.from(imageArray)
-      .reduce(((sum, img) => img.classList.contains('green') ? sum + 1 : sum; ), 0)
 
-    if (victory > 15) fetch('/success');
+    // update victory condition
+    const victory = Array.from(imageArray)
+      .reduce(((sum, img) => img.classList.contains('green') ? sum + 1 : sum), 0);
+
+    if (victory > 15 && !hasSummonedPizza && currentPosition === 18) {
+      fetch('./success');
+      hasSummonedPizza = true;
+      setTimeout(() => { hasSummonedPizza = false; }, 30000);
+      reset();
+    }
 
   });
 
@@ -138,11 +152,14 @@ function compareKeypoints(livePoints) {
     .map((key) => {
       const threshold = thresholds[key];
       const normalized = normalize(comparisonGroups[key]);
+      //console.log(threshold);
+      //console.log(normalized);
       return normalized < threshold;
     })
     .every(Boolean);
 
-  if (matched) setMatched(currentPosition);
+  //should be matched!, just true for testing
+  if (true) setMatched(currentPosition);
 }
 
 function setMatched(position) {
@@ -206,5 +223,10 @@ function angle(x_comp, y_comp) {
 
 function distance(x_comp, y_comp) {
   return Math.pow((Math.pow(x_comp, 2) + Math.pow(y_comp, 2)), 0.5);
+}
+
+function reset() {
+  Array.from(imageArray)
+    .forEach(img => img.classList.remove('green'));
 }
 
