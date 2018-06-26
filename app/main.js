@@ -12,10 +12,8 @@ let dancing;
 
 let poseNet;
 let person = [];
-let keyframes = [];
+let keyFrames = [];
 let currentPosition = 0;
-const framePositions = [1, 2, 3, 4, 5]; // should be millisecond timestamps
-// only push poses to data when > than millisecond timestamps, ++timelinePosition
 
 let imageArray = document.getElementsByTagName('img');
 
@@ -36,15 +34,11 @@ let imageArray = document.getElementsByTagName('img');
 
   fetch('./poses/poses.json')
     .then(data => data.json())
-    .then(json => keyframes = json)
+    .then(json => keyFrames = json)
 
 })();
 
 function setup() {
-  //TODO: create video playback element with timeline and pose timestamps highlighted
-  //TODO: video.onend fire reset
-  //TODO: video.timestampupdate or whatever to set timeline comparions
-
   const container = document.createElement('div');
         container.style = 'vertical-align: top';
   document.body.appendChild(container);
@@ -120,7 +114,6 @@ function draw() {
 }
 
 function drawData() {
-  //TODO: compare distance and angle from appendage keypoints to nose
   person.forEach((personData) => {
 
     personData.pose.keypoints.forEach((keypoint) => {
@@ -132,40 +125,61 @@ function drawData() {
       line(start.position.x, start.position.y, end.position.x, end.position.y);
     });
 
-    compareKeypoints(personData);
+    compareKeypoints(personData.pose.keypoints);
 
   });
 }
 
-function compareKeypoints(livePose) {
-  let expectedPose = keyFrames[currentPosition]
-  let pointsByKey = livePose.concat(expectedPose)
-    .reduce((obj, point) => {
-      const { part, position } = point;
-      obj[part] = obj[part] ?
-        obj[part].concat(position) :
-        [ position ];
-      return obj;
-    }, {});
+function compareKeypoints(livePoints) {
+  const livePose = collectPointDistancesAndAngles(livePoints);
+  const expectedPose = collectPointDistancesAndAngles(keyFrames[currentPosition]);
 
-  return Object.keys(pointsByKey)
-    .map(key => distance(pointsByKey[key]))
-    .every(el => el < threshold);
+  debugger;
+
+  return;
+  //TODO: merge a keyed threshold map, everything should be below its threshold value
+  //return Object.keys(pointsByKey)
+    //.map(key => distance(pointsByKey[key], key))
+    //.every(el => el < threshold);
 }
 
-function distance(pointarray) {
-  const [
-    {x: x1, y: y1},
-    {x: x2 = x1, y: y2 = y1}
-  ] = pointarray;
-  return [rms(x1, x2), rms(y1, y2)]
+function collectPointDistancesAndAngles(points) {
+  const byKey = points
+    .reduce(pointsByKey, {});
+
+  const calculate = distanceAndAngleFromNose.bind(null, byKey['nose'] || {x: 0, y: 0});
+
+  return Object.keys(byKey)
+    .map(key => calculate(byKey[key], key));
 }
 
-function rms(arg1, arg2) {
-  return Math.pow(Math.pow(arg1, 2) - Math.pow(arg2, 2), 0.5);
+function pointsByKey(obj, points) {
+  const { part, position } = point;
+  obj[part] = obj[part] ?
+    obj[part].concat(position) :
+    [ position ];
+  return obj;
+};
+
+function distanceAndAngleFromNose(
+  {x: nose_x, y: nose_y},
+  {x: point_x, y: point_y},
+  name) {
+
+  const x_comp = point_x - nose_x;
+  const y_comp = point_y - nose_y;
+
+  const d = distance(x_comp, y_comp);
+  const a = angle(x_comp, y_comp);
+
+  return {[name]: {distance: d, angle: a}};
 }
 
-function reset() {
-  data = [];
-  timelinePosition = 0;
+function angle(x_comp, y_comp) {
+  return Math.atan2(y_comp, x_comp);
 }
+
+function distance(x_comp, y_comp) {
+  return Math.pow((Math.pow(x_comp, 2) + Math.pow(y_comp, 2)), 0.5);
+}
+

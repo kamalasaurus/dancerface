@@ -1,0 +1,20 @@
+{
+  "nose": "0",
+  "leftEye": "1",
+  "rightEye": "1",
+  "leftEar": "1",
+  "rightEar": "1",
+  "leftShoulder": "0.2",
+  "rightShoulder": "0.2",
+  "leftElbow": "0.4",
+  "rightElbow": "0.4",
+  "leftWrist": "1",
+  "rightWrist": "1",
+  "leftHip": "0.2",
+  "rightHip": "0.2",
+  "leftKnee": "0.4",
+  "rightKnee": "0.4",
+  "leftAnkle": "1",
+  "rightAnkle": "1"
+}
+
