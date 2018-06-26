@@ -128,8 +128,10 @@ function compareKeypoints(livePoints) {
   const livePose = collectPointDistancesAndAngles(livePoints);
   const expectedPose = collectPointDistancesAndAngles(keyFrames[currentPosition]);
 
-  const comparsionGroups = livePose.concat(expectedPose)
-    .reduce(pointsByKey, {});
+  const comparisonGroups = livePose.concat(expectedPose)
+    .reduce(groupByKey, {});
+
+  debugger;
 
   const matched = Object.keys(comparisonGroups)
     .map((key) => {
@@ -160,7 +162,16 @@ function collectPointDistancesAndAngles(points) {
     .map(key => calculate(byKey[key], key));
 }
 
-function pointsByKey(obj, points) {
+function groupByKey(obj, posObj) {
+  const key = Object.keys(posObj)[0];
+  const el = posObj[key];
+  obj[key] = obj[key] ?
+    obj[key].concat(el) :
+    [ el ];
+  return obj;
+}
+
+function pointsByKey(obj, point) {
   const { part, position } = point;
   obj[part] = obj[part] ?
     obj[part].concat(position) :
@@ -169,8 +180,8 @@ function pointsByKey(obj, points) {
 };
 
 function distanceAndAngleFromNose(
-  {x: nose_x, y: nose_y},
-  {x: point_x, y: point_y},
+  [{x: nose_x, y: nose_y}],
+  [{x: point_x, y: point_y}],
   name) {
 
   const x_comp = point_x - nose_x;
