@@ -1,6 +1,8 @@
 //TODO: in server.js summon a dominos pizza upon total success!
 //TODO: block future success so the app doesn't go bankrupt 😅
 
+// this kind of intermittent global variable call out architecture is
+// regrettable. -_____-;
 const threshold = 20;
 
 const w = 770;
@@ -13,6 +15,7 @@ let dancing;
 let poseNet;
 let person = [];
 let keyFrames = [];
+let thresholds = {};
 let currentPosition = 0;
 
 let imageArray = document.getElementsByTagName('img');
@@ -34,7 +37,11 @@ let imageArray = document.getElementsByTagName('img');
 
   fetch('./poses/poses.json')
     .then(data => data.json())
-    .then(json => keyFrames = json)
+    .then(json => keyFrames = json);
+
+  fetch('./poses/thresholds.json')
+    .then(data => data.json())
+    .then(json => thresholds = json);
 
 })();
 
@@ -66,9 +73,8 @@ function setup() {
         if (id < currentPosition + 0.25 && !img.classList.contains('green')) {
           img.src = `./poses/purple/${id}.png`;
           img.style.borderColor = 'magenta';
-        } else if (!(id % 3)) {
+        } else if (img.classList.contains('green')) {
           img.src = `./poses/green/${id}.png`;
-          img.classList.add('green');
           img.style.borderColor = 'lightgreen';
         } else {
           img.src = `./poses/red/${id}.png`;
@@ -134,13 +140,23 @@ function compareKeypoints(livePoints) {
   const livePose = collectPointDistancesAndAngles(livePoints);
   const expectedPose = collectPointDistancesAndAngles(keyFrames[currentPosition]);
 
-  debugger;
+  const comparsionGroups = livePose.concat(expectedPose)
+    .reduce(pointsByKey, {});
 
-  return;
-  //TODO: merge a keyed threshold map, everything should be below its threshold value
-  //return Object.keys(pointsByKey)
-    //.map(key => distance(pointsByKey[key], key))
-    //.every(el => el < threshold);
+  const matched = Object.keys(comparisonGroups)
+    .map((key) => {
+      const t = thresholds[key];
+      debugger;
+    })
+    .every(Boolean);
+
+  if (matched) setMatched(currentPosition);
+}
+
+function setMatched(position) {
+  document.getElementById(`image_${position}`)
+    .classList
+    .add('green');
 }
 
 function collectPointDistancesAndAngles(points) {
