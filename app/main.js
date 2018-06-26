@@ -136,8 +136,9 @@ function compareKeypoints(livePoints) {
 
   const matched = Object.keys(comparisonGroups)
     .map((key) => {
-      const t = thresholds[key];
-      debugger;
+      const threshold = thresholds[key];
+      const normalized = normalize(comparisonGroups[key]);
+      return normalized < threshold;
     })
     .every(Boolean);
 
@@ -148,6 +149,11 @@ function setMatched(position) {
   document.getElementById(`image_${position}`)
     .classList
     .add('green');
+}
+
+// set sum distance between distance and angle to 1, basic normalization
+function normalized([{distance: d1, angle: a1}, {distance: d2, angle: a2}]) {
+  return 0.5 * ((d1 - d2) / Math.max(d1, d2)) + 0.5 * ((a1 - a2) / Math.max(a1, a2));
 }
 
 function collectPointDistancesAndAngles(points) {
