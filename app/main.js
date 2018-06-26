@@ -3,10 +3,7 @@
 
 // this kind of intermittent global variable call out architecture is
 // regrettable. -_____-;
-const threshold = 20;
-
 const w = 770;
-//const w = 1960;
 const h = 1080;
 
 let video;
@@ -101,21 +98,12 @@ function setup() {
 
   video.hide()
 
-  //poseNet = ml5.poseNet(
-    //dancing,
-    //'single',
-    //(results) => { person = results; }
-  //);
-
   fill(255, 0, 0);
   stroke(255, 0, 0);
 }
 
 function draw() {
   image(video, 0, 0, 640, 480);
-  //image(video, 0, 0, w, h);
-  //image(dancing, 0, 0, w, h);
-  //background(255, 255, 255);
   drawData();
 }
 
@@ -163,6 +151,9 @@ function collectPointDistancesAndAngles(points) {
   const byKey = points
     .reduce(pointsByKey, {});
 
+  // bind the nose to the first variable as point of reference for distance measure
+  // since the nose is constant for all calculations; can iterate freely w/ curried
+  // function ... it's probably unnecessary optimization for this kind of thing though
   const calculate = distanceAndAngleFromNose.bind(null, byKey['nose'] || {x: 0, y: 0});
 
   return Object.keys(byKey)
