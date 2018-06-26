@@ -43,9 +43,6 @@ let imageArray = document.getElementsByTagName('img');
 })();
 
 function setup() {
-  const container = document.createElement('div');
-        container.style = 'vertical-align: top';
-  document.body.appendChild(container);
 
   dancing = document.createElement('video');
   dancing.setAttribute('muted', true);
@@ -79,11 +76,14 @@ function setup() {
         }
       });
 
-    //TODO: whenever green/total > victory threshold, order the pizza!
+    const victory = Array.from(imageArray)
+      .reduce(((sum, img) => img.classList.contains('green') ? sum + 1 : sum; ), 0)
+
+    if (victory > 15) fetch('/success');
 
   });
 
-  container.appendChild(dancing);
+  document.body.appendChild(dancing);
 
   createCanvas(640, 480);
   video = createCapture(VIDEO)
@@ -91,7 +91,7 @@ function setup() {
   const canvas = document.querySelector('canvas');
 
   canvas.style = 'vertical-align: top; display: inline-block;';
-  container.appendChild(canvas);
+  document.body.appendChild(canvas);
 
   poseNet = ml5.poseNet(
     video,
@@ -152,7 +152,7 @@ function setMatched(position) {
 }
 
 // set sum distance between distance and angle to 1, basic normalization
-function normalized([{distance: d1, angle: a1}, {distance: d2, angle: a2}]) {
+function normalize([{distance: d1, angle: a1}, {distance: d2, angle: a2}]) {
   return 0.5 * ((d1 - d2) / Math.max(d1, d2)) + 0.5 * ((a1 - a2) / Math.max(a1, a2));
 }
 

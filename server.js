@@ -1,5 +1,7 @@
 const {copy, concat, compile} = require('./build.js');
-const pizzapi = require('dominos');
+//const pizzapi = require('dominos');
+
+const pizzapi = require('pizzapi');
 
 const fs = require('fs');
 const path = require('path');
@@ -20,27 +22,27 @@ compile(scripts); // build upon launch
 
 
 // setup dominos
-//let address = new pizzapi.Address('721 Broadway, New York, NY 10003');
-//let customer = new pizzapi.Customer({
-  //address,
-  //firstName: 'NYU',
-  //lastName: 'Student',
-  //phone: 'xxx-xxx-xxxx',
-  //email: 'salami@sandwich.com'
-//});
+let address = new pizzapi.Address('721 Broadway, New York, NY 10003');
+let customer = new pizzapi.Customer({
+  address,
+  firstName: 'NYU',
+  lastName: 'Student',
+  phone: 'xxx-xxx-xxxx',
+  email: 'salami@sandwich.com'
+});
 //TODO: add secrets.json for name and email creds
 
-//let myStore;
+let myStore;
 
-//pizzapi.Util.findNearbyStores(
-  //'721 Broadway, New York, NY 10003',
-  //'Delivery',
-  //(storeData) => {
-    //const { result: { Stores: [{ StoreID }] }} = storeData;
-    //myStore = new pizzapi.Store();
-    //myStore.ID = StoreID;
-  //}
-//);
+pizzapi.Util.findNearbyStores(
+  '721 Broadway, New York, NY 10003',
+  'Delivery',
+  (storeData) => {
+    const { result: { Stores: [{ StoreID }] }} = storeData;
+    myStore = new pizzapi.Store();
+    myStore.ID = StoreID;
+  }
+);
 
 //get menu
 //get code for cheese pizza
@@ -54,10 +56,8 @@ const root = path.join(process.cwd(), 'app');
 app.use(express.static(root));
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post('write', (req, res) => {
-  const filename = `pose_${Date.now()}`;
-  const body = req.body.Body;
-  fs.writeFileSync(filename, JSON.stringify(body, null, 2));
+app.get('success', (req, res) => {
+
 });
 
 app.listen(1337, () => { console.log('listening on port 1337') });
